@@ -10,6 +10,13 @@ use canonical::Canon;
 use canonical_derive::Canon;
 use dusk_bls12_381::Scalar;
 
+pub mod ops {
+    pub const QUERY_READ_VALUE_SQUARED: u8 = 0x00;
+    pub const QUERY_STATE: u8 = 0x01;
+
+    pub const TRANSACTION_SET_STATE_NEG: u8 = 0x00;
+}
+
 #[derive(Debug, Clone, Canon)]
 pub struct Contract {
     state: Scalar,

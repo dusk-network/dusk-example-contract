@@ -54,7 +54,7 @@ fn transact() {
 
     let store = <Host as AsRef<MemStore>>::as_ref(&host).clone();
     let mut cast_mut = remote.cast_mut::<Wasm<Contract, MemStore>>().unwrap();
-    let transact = Contract::set_state_hash(&host, pos as usize).unwrap();
+    let transact = Contract::set_state_neg(&host, pos as usize).unwrap();
     cast_mut.transact(&transact, store).unwrap();
     cast_mut.commit().unwrap();
 

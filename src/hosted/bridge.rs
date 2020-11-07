@@ -1,5 +1,5 @@
 use crate::leaf::ContractLeaf;
-use crate::Contract;
+use crate::{ops, Contract};
 use canonical::{BridgeStore, ByteSink, ByteSource, Canon, Id32, Store};
 
 const PAGE_SIZE: usize = 1024 * 4;
@@ -14,10 +14,10 @@ fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
     let slf: Contract = Canon::<BS>::read(&mut source)?;
 
     // read query id
-    let qid: u16 = Canon::<BS>::read(&mut source)?;
+    let qid: u8 = Canon::<BS>::read(&mut source)?;
     match qid {
         // read_value_squared (&Self) -> Scalar
-        0 => {
+        ops::QUERY_READ_VALUE_SQUARED => {
             let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
             let ret = slf.read_value_squared(leaf);
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
@@ -25,7 +25,7 @@ fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
             Ok(())
         }
         // state (&Self) -> Scalar
-        1 => {
+        ops::QUERY_STATE => {
             let ret = slf.state();
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
             Canon::<BS>::write(&ret, &mut sink)?;
@@ -47,13 +47,13 @@ fn transaction(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> 
     // read self.
     let mut slf: Contract = Canon::<BS>::read(&mut source)?;
     // read transaction id
-    let qid: u16 = Canon::<BS>::read(&mut source)?;
+    let qid: u8 = Canon::<BS>::read(&mut source)?;
     match qid {
         // increment (&Self)
-        0 => {
+        ops::TRANSACTION_SET_STATE_NEG => {
             // read multiple args
             let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
-            let res = slf.set_state_hash(leaf);
+            let res = slf.set_state_neg(leaf);
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
             // return new state
             Canon::<BS>::write(&slf, &mut sink)?;
