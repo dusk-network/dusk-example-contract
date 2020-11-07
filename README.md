@@ -2,6 +2,8 @@
 
 Merkle tree implementation for a constrained execution environment
 
+To test: `$ make test`
+
 ## Query methods
 
 ##### `read_value_squared(pos) -> Scalar`
