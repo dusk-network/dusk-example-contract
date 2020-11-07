@@ -1,0 +1,27 @@
+[package]
+name = "dusk-example-contract"
+version = "0.1.0"
+authors = ["Victor Lopez <vhrlopes@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+canonical = "0.4"
+canonical_derive = "0.4"
+canonical_host = { version = "0.4", optional = true }
+anyhow = { version = "1.0", optional = true }
+dusk-bls12_381 = { git = "https://github.com/dusk-network/bls12_381", branch = "vlope11/scalar-no-std", default-features = false, features = ["canon"] }
+poseidon252 = { git = "https://github.com/dusk-network/poseidon252", branch = "vlopes11/no-std-scalar", default-features = false, optional = true }
+
+[features]
+default = []
+hosted = []
+host = ["anyhow", "canonical/host", "canonical_host", "poseidon252/canon_host", "poseidon252/default"]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
