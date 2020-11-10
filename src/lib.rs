@@ -6,7 +6,7 @@
 
 #![cfg_attr(feature = "hosted", no_std)]
 
-use canonical::Store;
+use canonical::{BridgeStore, Id32};
 use canonical_derive::Canon;
 use dusk_bls12_381::BlsScalar;
 use leaf::ContractLeaf;
@@ -20,15 +20,12 @@ pub mod ops {
 }
 
 #[derive(Debug, Clone, Canon)]
-pub struct Contract<S: Store> {
+pub struct Contract {
     state: BlsScalar,
-    tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17>,
+    tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, BridgeStore<Id32>, 17>,
 }
 
-impl<S> Contract<S>
-where
-    S: Store,
-{
+impl Contract {
     pub fn new() -> Self {
         Self {
             state: BlsScalar::zero(),
