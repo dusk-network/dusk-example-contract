@@ -7,8 +7,7 @@
 #![cfg_attr(feature = "hosted", no_std)]
 #![feature(min_const_generics)]
 
-use canonical::{Store};
-use canonical_derive::Canon;
+use canonical::{Canon, Sink, Source, Store};
 use dusk_bls12_381::BlsScalar;
 use leaf::ContractLeaf;
 use poseidon252::tree::{PoseidonMaxAnnotation, PoseidonTree};
@@ -26,16 +25,24 @@ pub struct Contract<S: Store> {
     tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17>,
 }
 
-impl<S: Store> Contract<S> {
+impl<S> Canon<S> for Contract<S>
 where
     S: Store,
 {
     fn read(source: &mut impl Source<S>) -> Result<Self, S::Error> {
-        unimplemented!()
+        Ok(Contract {
+            state: Canon::<S>::read(source)?,
+            tree: Canon::<S>::read(source)?,
+        })
     }
 
     fn write(&self, sink: &mut impl Sink<S>) -> Result<(), S::Error> {
-        unimplemented!()
+        self.state.write(sink)?;
+        self.tree.write(sink)
+    }
+
+    fn encoded_len(&self) -> usize {
+        Canon::<S>::encoded_len(&self.state) + Canon::<S>::encoded_len(&self.tree)
     }
 }
 
