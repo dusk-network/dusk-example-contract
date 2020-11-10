@@ -2,7 +2,7 @@ use super::Host;
 use crate::leaf::ContractLeaf;
 use crate::Contract;
 use canonical_host::{MemStore, Remote, Wasm};
-use dusk_bls12_381::Scalar;
+use dusk_bls12_381::BlsScalar;
 
 const BYTECODE: &'static [u8] =
     include_bytes!("../../target/wasm32-unknown-unknown/release/dusk_example_contract.wasm");
@@ -29,7 +29,7 @@ fn query() {
     let (host, remote) = init();
 
     let store = <Host as AsRef<MemStore>>::as_ref(&host).clone();
-    let cast = remote.cast::<Wasm<Contract, MemStore>>().unwrap();
+    let cast = remote.cast::<Wasm<Contract<MemStore>, MemStore>>().unwrap();
     let query = Contract::read_value_squared(&host, pos as usize).unwrap();
     let val_remote = cast.query(&query, store).unwrap();
 
@@ -47,19 +47,21 @@ fn transact() {
     let (host, mut remote) = init();
 
     let store = <Host as AsRef<MemStore>>::as_ref(&host).clone();
-    let cast = remote.cast::<Wasm<Contract, MemStore>>().unwrap();
+    let cast = remote.cast::<Wasm<Contract<MemStore>, MemStore>>().unwrap();
     let query = Contract::state();
     let state = cast.query(&query, store).unwrap();
-    assert_eq!(Scalar::zero(), state);
+    assert_eq!(BlsScalar::zero(), state);
 
     let store = <Host as AsRef<MemStore>>::as_ref(&host).clone();
-    let mut cast_mut = remote.cast_mut::<Wasm<Contract, MemStore>>().unwrap();
+    let mut cast_mut = remote
+        .cast_mut::<Wasm<Contract<MemStore>, MemStore>>()
+        .unwrap();
     let transact = Contract::set_state_neg(&host, pos as usize).unwrap();
     cast_mut.transact(&transact, store).unwrap();
     cast_mut.commit().unwrap();
 
     let store = <Host as AsRef<MemStore>>::as_ref(&host).clone();
-    let cast = remote.cast::<Wasm<Contract, MemStore>>().unwrap();
+    let cast = remote.cast::<Wasm<Contract<MemStore>, MemStore>>().unwrap();
     let query = Contract::state();
     let state = cast.query(&query, store).unwrap();
     assert_eq!(val, state);

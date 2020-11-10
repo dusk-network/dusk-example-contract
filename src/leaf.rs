@@ -24,13 +24,34 @@ impl From<u64> for ContractLeaf {
     }
 }
 
-//#[cfg(feature = "host")]
-//use poseidon252::sponge::sponge;
 use poseidon252::tree::PoseidonLeaf;
-
-impl<S> PoseidonLeaf<S> for ContractLeaf where S: Store {
+#[cfg(feature = "hosted")]
+impl<S> PoseidonLeaf<S> for ContractLeaf
+where
+    S: Store,
+{
     fn poseidon_hash(&self) -> BlsScalar {
         unimplemented!();
+    }
+
+    fn pos(&self) -> u64 {
+        self.pos
+    }
+
+    fn set_pos(&mut self, pos: u64) {
+        self.pos = pos;
+    }
+}
+#[cfg(feature = "host")]
+use poseidon252::sponge::sponge::sponge_hash;
+#[cfg(feature = "host")]
+impl<S> PoseidonLeaf<S> for ContractLeaf
+where
+    S: Store,
+{
+    fn poseidon_hash(&self) -> BlsScalar {
+        let pos = BlsScalar::from(self.pos);
+        sponge_hash(&[self.s, pos])
     }
 
     fn pos(&self) -> u64 {

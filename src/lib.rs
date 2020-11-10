@@ -19,7 +19,7 @@ pub mod ops {
     pub const TRANSACTION_SET_STATE_NEG: u8 = 0x00;
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Contract<S: Store> {
     state: BlsScalar,
     tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17>,
