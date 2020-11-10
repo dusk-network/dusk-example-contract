@@ -5,8 +5,9 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 #![cfg_attr(feature = "hosted", no_std)]
+#![feature(min_const_generics)]
 
-use canonical::{BridgeStore, Id32};
+use canonical::{Store};
 use canonical_derive::Canon;
 use dusk_bls12_381::BlsScalar;
 use leaf::ContractLeaf;
@@ -19,13 +20,13 @@ pub mod ops {
     pub const TRANSACTION_SET_STATE_NEG: u8 = 0x00;
 }
 
-#[derive(Debug, Clone, Canon)]
-pub struct Contract {
+#[derive(Clone)]
+pub struct Contract<S: Store> {
     state: BlsScalar,
-    tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, BridgeStore<Id32>, 17>,
+    tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17>,
 }
 
-impl Contract {
+impl<S: Store> Contract<S> {
     pub fn new() -> Self {
         Self {
             state: BlsScalar::zero(),

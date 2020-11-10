@@ -8,9 +8,10 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-canonical = {git = "https://github.com/dusk-network/canonical", branch = "module_examples_nstack"}
-canonical_derive = {git = "https://github.com/dusk-network/canonical", branch = "module_examples_nstack"}
-canonical_host = { git = "https://github.com/dusk-network/canonical", branch = "module_examples_nstack", optional = true }
+canonical = "0.4"
+canonical_derive = "0.4"
+canonical_host = { version = "0.4", optional = true }
+
 anyhow = { version = "1.0", optional = true }
 dusk-bls12_381 = { git = "https://github.com/dusk-network/bls12_381", version = "0.3", default-features = false, features = ["canon"] }
 poseidon252 = { git = "https://github.com/dusk-network/poseidon252", branch = "min_nost", default-features = false, features = ["canon"]}

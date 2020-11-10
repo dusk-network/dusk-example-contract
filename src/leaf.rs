@@ -1,4 +1,4 @@
-use canonical::{BridgeStore, Canon, Id32, Store};
+use canonical::{Canon, Store};
 use canonical_derive::Canon;
 use core::borrow::Borrow;
 use dusk_bls12_381::BlsScalar;
@@ -28,7 +28,7 @@ impl From<u64> for ContractLeaf {
 //use poseidon252::sponge::sponge;
 use poseidon252::tree::PoseidonLeaf;
 
-impl PoseidonLeaf<BridgeStore<Id32>> for ContractLeaf {
+impl<S> PoseidonLeaf<S> for ContractLeaf where S: Store {
     fn poseidon_hash(&self) -> BlsScalar {
         unimplemented!();
     }
