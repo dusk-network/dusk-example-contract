@@ -1,9 +1,13 @@
 use crate::leaf::ContractLeaf;
 use crate::Contract;
-use dusk_bls12_381::Scalar;
+use canonical::Store;
+use dusk_bls12_381::BlsScalar;
 
-impl Contract {
-    pub fn set_state_neg(&mut self, leaf: ContractLeaf) -> Scalar {
+impl<S> Contract<S>
+where
+    S: Store,
+{
+    pub fn set_state_neg(&mut self, leaf: ContractLeaf) -> BlsScalar {
         self.state = leaf.s.neg();
         self.state
     }

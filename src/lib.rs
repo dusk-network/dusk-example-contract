@@ -6,9 +6,11 @@
 
 #![cfg_attr(feature = "hosted", no_std)]
 
-use canonical::Canon;
+use canonical::Store;
 use canonical_derive::Canon;
-use dusk_bls12_381::Scalar;
+use dusk_bls12_381::BlsScalar;
+use leaf::ContractLeaf;
+use poseidon252::tree::{PoseidonMaxAnnotation, PoseidonTree};
 
 pub mod ops {
     pub const QUERY_READ_VALUE_SQUARED: u8 = 0x00;
@@ -18,14 +20,19 @@ pub mod ops {
 }
 
 #[derive(Debug, Clone, Canon)]
-pub struct Contract {
-    state: Scalar,
+pub struct Contract<S: Store> {
+    state: BlsScalar,
+    tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17>,
 }
 
-impl Contract {
+impl<S> Contract<S>
+where
+    S: Store,
+{
     pub fn new() -> Self {
         Self {
-            state: Scalar::zero(),
+            state: BlsScalar::zero(),
+            tree: PoseidonTree::new(),
         }
     }
 }

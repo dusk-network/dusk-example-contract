@@ -11,7 +11,7 @@ fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
     let mut source = ByteSource::new(&bytes[..], store.clone());
 
     // read self.
-    let slf: Contract = Canon::<BS>::read(&mut source)?;
+    let slf: Contract<NO_STD_STORE> = Canon::<BS>::read(&mut source)?;
 
     // read query id
     let qid: u8 = Canon::<BS>::read(&mut source)?;
@@ -45,7 +45,7 @@ fn transaction(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> 
     let mut source = ByteSource::new(bytes, store.clone());
 
     // read self.
-    let mut slf: Contract = Canon::<BS>::read(&mut source)?;
+    let mut slf: Contract<NO_STD_STORE> = Canon::<BS>::read(&mut source)?;
     // read transaction id
     let qid: u8 = Canon::<BS>::read(&mut source)?;
     match qid {
