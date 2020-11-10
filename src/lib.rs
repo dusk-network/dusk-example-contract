@@ -27,6 +27,19 @@ pub struct Contract<S: Store> {
 }
 
 impl<S: Store> Contract<S> {
+where
+    S: Store,
+{
+    fn read(source: &mut impl Source<S>) -> Result<Self, S::Error> {
+        unimplemented!()
+    }
+
+    fn write(&self, sink: &mut impl Sink<S>) -> Result<(), S::Error> {
+        unimplemented!()
+    }
+}
+
+impl<S: Store> Contract<S> {
     pub fn new() -> Self {
         Self {
             state: BlsScalar::zero(),
