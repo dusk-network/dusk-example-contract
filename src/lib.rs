@@ -6,7 +6,7 @@
 
 #![cfg_attr(feature = "hosted", no_std)]
 
-use canonical::{BridgeStore, Id32};
+use canonical::{BridgeStore, Canon, Id32, Sink, Source, Store};
 use canonical_derive::Canon;
 use dusk_bls12_381::BlsScalar;
 use leaf::ContractLeaf;
@@ -19,10 +19,23 @@ pub mod ops {
     pub const TRANSACTION_SET_STATE_NEG: u8 = 0x00;
 }
 
-#[derive(Debug, Clone, Canon)]
+#[derive(Debug, Clone)]
 pub struct Contract {
     state: BlsScalar,
     tree: PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, BridgeStore<Id32>, 17>,
+}
+
+impl<S> Canon<S> for Contract
+where
+    S: Store,
+{
+    fn read(source: &mut impl Source<S>) -> Result<Self, S::Error> {
+        unimplemented!()
+    }
+
+    fn write(&self, sink: &mut impl Sink<S>) -> Result<(), S::Error> {
+        unimplemented!()
+    }
 }
 
 impl Contract {
