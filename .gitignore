@@ -1,2 +1,4 @@
 /target
-Cargo.lock
+/Cargo.lock
+hasher/Cargo.lock
+hasher/target

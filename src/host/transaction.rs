@@ -13,6 +13,6 @@ impl Contract<MemStore> {
         host.tree()
             .get(pos)
             .and_then(|leaf| leaf.ok_or(anyhow!("Leaf not found!")))
-            .map(|leaf| Transaction::new((ops::TRANSACTION_SET_STATE_NEG, leaf)))
+            .map(|leaf| Transaction::new((ops::PUSH_LEAF, leaf)))
     }
 }

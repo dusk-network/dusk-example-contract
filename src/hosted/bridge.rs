@@ -17,7 +17,7 @@ fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
     let qid: u8 = Canon::<BS>::read(&mut source)?;
     match qid {
         // read_value_squared (&Self) -> Scalar
-        ops::QUERY_READ_VALUE_SQUARED => {
+        ops::GET_LEAF => {
             let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
             let ret = slf.read_value_squared(leaf);
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
@@ -50,7 +50,7 @@ fn transaction(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> 
     let qid: u8 = Canon::<BS>::read(&mut source)?;
     match qid {
         // increment (&Self)
-        ops::TRANSACTION_SET_STATE_NEG => {
+        ops::PUSH_LEAF => {
             // read multiple args
             let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
             let res = slf.set_state_neg(leaf);

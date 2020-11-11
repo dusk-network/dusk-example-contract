@@ -6,6 +6,7 @@
 
 #![cfg_attr(feature = "hosted", no_std)]
 #![feature(min_const_generics)]
+#![feature(stmt_expr_attributes)]
 
 use canonical::{Canon, Sink, Source, Store};
 use dusk_bls12_381::BlsScalar;
@@ -13,10 +14,10 @@ use leaf::ContractLeaf;
 use poseidon252::tree::{PoseidonMaxAnnotation, PoseidonTree};
 
 pub mod ops {
-    pub const QUERY_READ_VALUE_SQUARED: u8 = 0x00;
+    pub const GET_LEAF: u8 = 0x00;
     pub const QUERY_STATE: u8 = 0x01;
 
-    pub const TRANSACTION_SET_STATE_NEG: u8 = 0x00;
+    pub const PUSH_LEAF: u8 = 0x02;
 }
 
 #[derive(Debug, Clone)]
@@ -52,6 +53,14 @@ impl<S: Store> Contract<S> {
             state: BlsScalar::zero(),
             tree: PoseidonTree::new(),
         }
+    }
+
+    pub fn tree(&self) -> &PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17> {
+        &self.tree
+    }
+
+    pub fn tree_mut(&mut self) -> &mut PoseidonTree<ContractLeaf, PoseidonMaxAnnotation, S, 17> {
+        &mut self.tree
     }
 }
 
