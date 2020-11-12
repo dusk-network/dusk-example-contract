@@ -5,8 +5,7 @@ use crate::leaf::ContractLeaf;
 use crate::Contract;
 
 impl<S: Store> Contract<S> {
-    pub fn set_state_neg(&mut self, leaf: ContractLeaf) -> BlsScalar {
-        self.state = leaf.s.neg();
-        self.state
+    pub fn push_leaf(&mut self, leaf: ContractLeaf) -> usize {
+        self.tree_mut().push(leaf).unwrap()
     }
 }

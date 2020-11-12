@@ -5,6 +5,8 @@ use canonical::{BridgeStore, ByteSink, ByteSource, Canon, Id32, Store};
 const PAGE_SIZE: usize = 1024 * 4;
 
 type BS = BridgeStore<Id32>;
+type QueryIndex = u16;
+type TransactionIndex = u16;
 
 fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
     let store = BS::default();
@@ -14,18 +16,21 @@ fn query(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> {
     let slf: Contract<BS> = Canon::<BS>::read(&mut source)?;
 
     // read query id
-    let qid: u8 = Canon::<BS>::read(&mut source)?;
+    let qid: QueryIndex = Canon::<BS>::read(&mut source)?;
     match qid {
-        // read_value_squared (&Self) -> Scalar
+        // get_leaf (&Self, u64) -> ContractLeaf
         ops::GET_LEAF => {
-            let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
-            let ret = slf.read_value_squared(leaf);
+            // Read idx
+            let idx: u64 = Canon::<BS>::read(&mut source)?;
+            // Get the leaf
+            let ret = slf.get_leaf(idx);
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
             Canon::<BS>::write(&ret, &mut sink)?;
             Ok(())
         }
         // state (&Self) -> Scalar
         ops::QUERY_STATE => {
+            // Get state
             let ret = slf.state();
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
             Canon::<BS>::write(&ret, &mut sink)?;
@@ -47,18 +52,18 @@ fn transaction(bytes: &mut [u8; PAGE_SIZE]) -> Result<(), <BS as Store>::Error> 
     // read self.
     let mut slf: Contract<BS> = Canon::<BS>::read(&mut source)?;
     // read transaction id
-    let qid: u8 = Canon::<BS>::read(&mut source)?;
+    let qid: TransactionIndex = Canon::<BS>::read(&mut source)?;
     match qid {
-        // increment (&Self)
+        // push_leaf (&mut Self, leaf: ContractLeaf)
         ops::PUSH_LEAF => {
             // read multiple args
             let leaf: ContractLeaf = Canon::<BS>::read(&mut source)?;
-            let res = slf.set_state_neg(leaf);
+            let idx = slf.push_leaf(leaf);
             let mut sink = ByteSink::new(&mut bytes[..], store.clone());
             // return new state
             Canon::<BS>::write(&slf, &mut sink)?;
             // return result
-            Canon::<BS>::write(&res, &mut sink)
+            Canon::<BS>::write(&(idx as u64), &mut sink)
         }
         _ => panic!(""),
     }

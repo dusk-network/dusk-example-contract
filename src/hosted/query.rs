@@ -1,15 +1,15 @@
-use dusk_bls12_381::BlsScalar;
 use canonical::Store;
+use dusk_bls12_381::BlsScalar;
 
 use crate::leaf::ContractLeaf;
 use crate::Contract;
 
 impl<S: Store> Contract<S> {
-    pub fn read_value_squared(&self, leaf: ContractLeaf) -> BlsScalar {
-        leaf.s.square()
+    pub fn get_leaf(&self, idx: u64) -> ContractLeaf {
+        self.tree().get(idx as usize).unwrap().unwrap()
     }
 
     pub fn state(&self) -> BlsScalar {
-        self.state
+        self.get_state()
     }
 }
