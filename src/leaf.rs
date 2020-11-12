@@ -27,7 +27,7 @@ impl From<u64> for ContractLeaf {
 }
 
 extern "C" {
-    fn p_hash(scalar_1: *const [u8; 32], scalar2: *const [u8; 32]) -> *const [u8; 32];
+    fn p_hash(scalar_1: *const [u8; 32], scalar2: *const [u8; 32], res: *mut [u8; 32]);
 }
 
 #[cfg(feature = "host")]
@@ -47,18 +47,13 @@ where
             }
             else if #[cfg(feature = "hosted")] {
                 unsafe {
-                    /*
                     let mut s1 = [0u8; 32];
                     s1.copy_from_slice(&inp[0].to_bytes()[..]);
                     let mut s2 = [0u8; 32];
                     s2.copy_from_slice(&inp[0].to_bytes()[..]);
-                    let res_ffi = p_hash(&s1 as *const [u8; 32], &s2 as *const [u8; 32]);
-                    let res_arr: [u8;32] = ptr::read_volatile(res_ffi);
-                    result = BlsScalar::from_bytes(&res_arr).unwrap()*/
-
-                    // Dummy stuff so that tests don't fail when hosted tries to annotate
-                    // by calling the hashing fn.
-                    result = BlsScalar::one();
+                    let mut result_ffi = [0u8; 32];
+                    p_hash(&s1 as *const [u8; 32], &s2 as *const [u8; 32], &mut result_ffi as *mut [u8;32]);
+                    result = BlsScalar::from_bytes(&result_ffi).unwrap()
                 }
             }
         }
