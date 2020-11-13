@@ -19,9 +19,9 @@ hasher = {path = "hasher/"}
 cfg-if = "1"
 
 [patch.crates-io]
-canonical = { path = "../canonical/canon" }
-canonical_derive = { path = "../canonical/canon_derive" }
-canonical_host = { path = "../canonical/canon_host" }
+canonical = { git = "https://github.com/dusk-network/canonical", branch = "hashing_resolv" }
+canonical_derive = { git = "https://github.com/dusk-network/canonical", branch = "hashing_resolv" }
+canonical_host = { git = "https://github.com/dusk-network/canonical", branch = "hashing_resolv" }
 
 [features]
 default = []
